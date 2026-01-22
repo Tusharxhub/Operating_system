@@ -1,7 +1,7 @@
-//! wap in c to display the largest between two number using if else.
+# !  wap in shell to display the largest between two number using if else.
 
 
-#include <stdio.h>
+
 int main()
 {   int num1, num2;
     printf("Enter two numbers: ");

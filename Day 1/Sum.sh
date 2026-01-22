@@ -1,6 +1,6 @@
-//! wap a c program  to display Sum of two numbers.
+#!  wap a shell program  to display Sum of two numbers.
 
-#include <stdio.h>
+
 int main()
 {
     int a, b, sum;
