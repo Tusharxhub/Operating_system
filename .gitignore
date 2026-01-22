@@ -1,0 +1,7 @@
+.ex
+# Executables
+a.out
+*.out
+*.exe
+*.bin
+*.elf
