@@ -1,4 +1,4 @@
-# !  wap in shell to display the largest number between two number using if else.
+# !  wap in shell to display the largest number between two numbers using if else.
 
 
 read -r -p "Enter two numbers: " num1 num2
