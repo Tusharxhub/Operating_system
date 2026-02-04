@@ -1,16 +1,8 @@
 # ! wap in shell to find area of circle.
 
 read -r -p "Enter the radius of the circle: " radius
-if [[ -z "$radius" ]]; then
-    echo "Please enter a valid radius."
-    exit 1
-fi
-if ! [[ $radius =~ ^-?[0-9]+(\.[0-9]+)?$ ]]; then
-    echo "Invalid input. Please enter a valid number for radius."
-    exit 1
-fi
-area=$(printf '%s
-' "scale=4; 3.1416 * $radius * $radius" | bc)
+[[ $radius =~ ^[0-9]+([.][0-9]+)?$ ]] || { echo "Invalid radius."; exit 1; }
+area=$(bc <<< "scale=4; 3.1416 * $radius * $radius")
 echo "Area of the circle with radius $radius is $area"
 
 
