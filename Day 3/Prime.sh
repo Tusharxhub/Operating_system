@@ -2,17 +2,9 @@
 
 read -r -p "Enter a number: " num
 [[ $num =~ ^[0-9]+$ ]] || { echo "Invalid input."; exit 1; }
-
-if (( num < 2 )); then
-    echo "$num is not a prime number."
-    exit 0
-fi
-
+(( num < 2 )) && { echo "$num is not a prime number."; exit 0; }
 for (( i=2; i*i<=num; i++ )); do
-    if (( num%i == 0 )); then
-        echo "$num is not a prime number."
-        exit 0
-    fi
+    (( num%i == 0 )) && { echo "$num is not a prime number."; exit 0; }
 done
 echo "$num is a prime number."
 
@@ -25,11 +17,10 @@ echo "$num is a prime number."
 #*       chmod +x "Day 3/Prime.sh"
 #*    4. Run the script using the command:
 #*       "Day 3/Prime.sh"
-#*    5. Follow the on-screen prompt to enter a number and see whether it
-#*       is a prime number or not.
+#*    5. Follow the on-screen prompt to enter a number and see whether it is a prime number or not.
 #?    Example Output
 #*    Enter a number: 7
-#*    7 is a prime number.
+#*    7 is a prime number. 
 #*    Enter a number: 10
 #*    10 is not a prime number.
 #*    Enter a number: -3
