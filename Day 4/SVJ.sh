@@ -1,4 +1,3 @@
-
 # !     Process                   B.Time          FCFS/SJF
 # !      A                          5
 # !      B                          4
@@ -8,82 +7,30 @@
 # ! calculate the Avg W.T
 # ! calculate the Avg T.A.T
 
+proc=(A B C D); bt=(5 4 2 6); n=${#proc[@]}
 
+calc() {
+  local -n b=$2 p=$3
+  echo "=== $1 ==="; echo "Proc  BT  WT  TAT"
+  local w=0 tw=0 tt=0
+  for ((i=0;i<n;i++)); do
+    t=$((w+b[i]))
+    printf " %s    %d   %d   %d\n" "${p[i]}" "${b[i]}" $w $t
+    tw=$((tw+w)); tt=$((tt+t)); w=$((w+b[i]))
+  done
+  echo "Avg WT = $(echo "scale=2;$tw/$n"|bc) | Avg TAT = $(echo "scale=2;$tt/$n"|bc)"
+}
 
-# ---------- Process Data ----------
-processes=("A" "B" "C" "D")
-burst_time=(5 4 2 6)
-n=${#processes[@]}
+# FCFS
+calc "FCFS" bt proc
 
-# ===================================
-#        FCFS Scheduling
-# ===================================
-echo "========================================="
-echo "        FCFS (First Come First Served)"
-echo "========================================="
-echo "Process   B.T   W.T   T.A.T"
-echo "---------+-----+-----+------"
-
-fcfs_wt=0
-fcfs_tat=0
-wait=0
-
-for ((i=0; i<n; i++)); do
-    tat=$((wait + burst_time[i]))
-    printf "   %s       %d     %d     %d\n" "${processes[i]}" "${burst_time[i]}" "$wait" "$tat"
-    fcfs_wt=$((fcfs_wt + wait))
-    fcfs_tat=$((fcfs_tat + tat))
-    wait=$((wait + burst_time[i]))
+# SJF - sort by burst time
+sp=("${proc[@]}"); sb=("${bt[@]}")
+for ((i=0;i<n-1;i++)); do
+  m=$i
+  for ((j=i+1;j<n;j++)); do ((sb[j]<sb[m]))&&m=$j; done
+  t=${sb[i]};sb[i]=${sb[m]};sb[m]=$t
+  t=${sp[i]};sp[i]=${sp[m]};sp[m]=$t
 done
-
-echo "---------+-----+-----+------"
-echo "Avg W.T  = $fcfs_wt / $n = $(echo "scale=2; $fcfs_wt / $n" | bc)"
-echo "Avg T.A.T= $fcfs_tat / $n = $(echo "scale=2; $fcfs_tat / $n" | bc)"
-
-# ===================================
-#        SJF Scheduling
-# ===================================
 echo ""
-echo "========================================="
-echo "        SJF (Shortest Job First)"
-echo "========================================="
-
-# Copy arrays and sort by burst time (selection sort)
-sjf_proc=("${processes[@]}")
-sjf_bt=("${burst_time[@]}")
-
-for ((i=0; i<n-1; i++)); do
-    min=$i
-    for ((j=i+1; j<n; j++)); do
-        if [ ${sjf_bt[j]} -lt ${sjf_bt[min]} ]; then
-            min=$j
-        fi
-    done
-    # Swap burst times
-    temp=${sjf_bt[i]}
-    sjf_bt[i]=${sjf_bt[min]}
-    sjf_bt[min]=$temp
-    # Swap process names
-    temp=${sjf_proc[i]}
-    sjf_proc[i]=${sjf_proc[min]}
-    sjf_proc[min]=$temp
-done
-
-echo "Process   B.T   W.T   T.A.T"
-echo "---------+-----+-----+------"
-
-sjf_wt=0
-sjf_tat=0
-wait=0
-
-for ((i=0; i<n; i++)); do
-    tat=$((wait + sjf_bt[i]))
-    printf "   %s       %d     %d     %d\n" "${sjf_proc[i]}" "${sjf_bt[i]}" "$wait" "$tat"
-    sjf_wt=$((sjf_wt + wait))
-    sjf_tat=$((sjf_tat + tat))
-    wait=$((wait + sjf_bt[i]))
-done
-
-echo "---------+-----+-----+------"
-echo "Avg W.T  = $sjf_wt / $n = $(echo "scale=2; $sjf_wt / $n" | bc)"
-echo "Avg T.A.T= $sjf_tat / $n = $(echo "scale=2; $sjf_tat / $n" | bc)"
+calc "SJF" sb sp
