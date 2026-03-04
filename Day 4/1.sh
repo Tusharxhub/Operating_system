@@ -9,33 +9,42 @@
 # ! calculate the Avg W.T
 # ! calculate the Avg T.A.T
 
-proc=(A B C D); bt=(5 4 2 6); n=${#proc[@]}
 
-calc() {
-  local -n b=$2 p=$3
-  echo "=== $1 ==="; echo "Proc  BT  WT  TAT"
-  local w=0 tw=0 tt=0
-  for ((i=0;i<n;i++)); do
-    t=$((w+b[i]))
-    printf " %s    %d   %d   %d\n" "${p[i]}" "${b[i]}" $w $t
-    tw=$((tw+w)); tt=$((tt+t)); w=$((w+b[i]))
-  done
-  echo "Avg WT = $(echo "scale=2;$tw/$n"|bc) | Avg TAT = $(echo "scale=2;$tt/$n"|bc)"
-}
+# Burst times
+bt=(5 4 2 6)
+process=("A" "B" "C" "D")
 
-# FCFS
-calc "FCFS" bt proc
+n=4
 
-# SJF - sort by burst time
-sp=("${proc[@]}"); sb=("${bt[@]}")
-for ((i=0;i<n-1;i++)); do
-  m=$i
-  for ((j=i+1;j<n;j++)); do ((sb[j]<sb[m]))&&m=$j; done
-  t=${sb[i]};sb[i]=${sb[m]};sb[m]=$t
-  t=${sp[i]};sp[i]=${sp[m]};sp[m]=$t
+wt=0
+tat=0
+total_wt=0
+total_tat=0
+
+echo "Process   BT   WT   TAT"
+
+for ((i=0;i<n;i++))
+do
+    if [ $i -eq 0 ]
+    then
+        wt=0
+    else
+        wt=$tat
+    fi
+
+    tat=$((wt + bt[i]))
+
+    total_wt=$((total_wt + wt))
+    total_tat=$((total_tat + tat))
+
+    echo "${process[i]}        ${bt[i]}    $wt    $tat"
 done
-echo ""
-calc "SJF" sb sp
+
+avg_wt=$(echo "scale=2; $total_wt / $n" | bc)
+avg_tat=$(echo "scale=2; $total_tat / $n" | bc)
+
+echo "Average Waiting Time = $avg_wt"
+echo "Average Turnaround Time = $avg_tat"
 
 
 # ?    How to compile and run the code
@@ -48,27 +57,11 @@ calc "SJF" sb sp
 # *       "Day 4/1.sh"
 # *    5. The output will display the scheduling results for both FCFS and SJF algorithms, including the average waiting time and average turnaround time for each scheduling method.
 # ?    Example Output
-# *    =========================================
-# *            FCFS (First Come First Served)
-# *    =========================================
-# *    Process   B.T   W.T   T.A.T
-# *    ---------+-----+-----+------
-# *       A       5     0     5
-# *       B       4     5     9
-# *       C       2     9     11 
-# *       D       6     11    17
-# *    ---------+-----+-----+------
-# *    Avg W.T  = 25 / 4 = 6.25 
-# *    Avg T.A.T= 42 / 4 = 10.50
-# *    =========================================
-# *            SJF (Shortest Job First)
-# *    =========================================
-# *    Process   B.T   W.T   T.A.T
-# *    ---------+-----+-----+------
-# *       C       2     0     2
-# *       B       4     2     6
-# *       A       5     6     11
-# *       D       6     11    17
-# *    ---------+-----+-----+------
-# *    Avg W.T  = 19 / 4 = 4.75
-# *    Avg T.A.T= 36 / 4 = 9.00
+# *    FCFS Scheduling:
+# *    Process   BT   WT   TAT
+# *    A        5    0    5
+# *    B        4    5    9
+# *    C        2    9    11
+# *    D        6    11   17
+# *    Average Waiting Time = 6.25
+# *    Average Turnaround Time = 10.50

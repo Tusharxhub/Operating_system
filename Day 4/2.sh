@@ -11,41 +11,40 @@
 #! Calculate the Avg T.A
 
 
-rocesses=(A B C D)
-burst_times=(5 4 2 6)
-arrival_times=(0 2 4 6)
+bt=(5 4 2 6)
+at=(0 2 4 6)
+wt=(0 0 0 0)
+tat=(0 0 0 0)
 
-current_time=0
-total_wait=0
-total_turnaround=0
-count=${#processes[@]}
+n=4
 
-printf "%-8s %-8s %-8s %-8s %-8s\n" "Process" "B.Time" "A.T" "W.T" "T.A"
-
-for i in "${!processes[@]}"; do
-	p=${processes[$i]}
-	bt=${burst_times[$i]}
-	at=${arrival_times[$i]}
-
-	if (( current_time < at )); then
-		current_time=$at
-	fi
-
-	wait_time=$(( current_time - at ))
-	turnaround_time=$(( wait_time + bt ))
-	current_time=$(( current_time + bt ))
-
-	total_wait=$(( total_wait + wait_time ))
-	total_turnaround=$(( total_turnaround + turnaround_time ))
-
-	printf "%-8s %-8d %-8d %-8d %-8d\n" "$p" "$bt" "$at" "$wait_time" "$turnaround_time"
+for ((i=1;i<n;i++))
+do
+  finish=$((at[i-1] + bt[i-1]))
+  if [ $finish -gt ${at[i]} ]
+  then
+    wt[$i]=$((finish - at[i]))
+  else
+    wt[$i]=0
+  fi
 done
 
-avg_wait=$(awk -v tw="$total_wait" -v n="$count" 'BEGIN { printf "%.2f", tw/n }')
-avg_turnaround=$(awk -v tt="$total_turnaround" -v n="$count" 'BEGIN { printf "%.2f", tt/n }')
+for ((i=0;i<n;i++))
+do
+  tat[$i]=$((wt[$i] + bt[$i]))
+done
 
-printf "\nAvg W.T = %s\n" "$avg_wait"
-printf "Avg T.A = %s\n" "$avg_turnaround"
+total_wt=0
+total_tat=0
+
+for ((i=0;i<n;i++))
+do
+  total_wt=$((total_wt + wt[i]))
+  total_tat=$((total_tat + tat[i]))
+done
+
+echo "Avg WT = $(echo "$total_wt / $n" | bc -l)"
+echo "Avg TAT = $(echo "$total_tat / $n" | bc -l)"
 
 
 # ?    How to compile and run the code
@@ -58,14 +57,5 @@ printf "Avg T.A = %s\n" "$avg_turnaround"
 # *       "Day 4/2.sh"
 # *    5. The output will display the scheduling results, including the average waiting time and average turnaround time for the given processes based on their burst times and arrival times.
 # ?    Example Output
-# *    =========================================
-# *            Process   B.Time   A.T   W.T   T.A
-# *    =========================================
-# *       A       5       0      0     5    
-# *       B       4       2      3     7    
-# *       C       2       4      5     7    
-# *       D       6       6      7     13   
-# *    -----------------------------------------
-# *    Avg W.T = 3.75
-# *    Avg T.A = 8.00  
-
+# *    Average Waiting Time = 2.00
+# *    Average Turnaround Time = 7.00
