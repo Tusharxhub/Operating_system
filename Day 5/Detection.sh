@@ -18,20 +18,20 @@ alloc=(
     "0 1"
     "1 0"
 )
-# Request Matrix
+
 request=(
     "0 1"
     "1 0"
     "1 0"
     "0 1"
 )
-# Available Resources
+
 avail=(1 0)
 
 n=4
 m=2
 
-# Deadlock Detection Algorithm
+
 finish=(0 0 0 0)
 work=(${avail[@]})
 changed=1
@@ -59,7 +59,7 @@ while [ $changed -eq 1 ]; do
     done
 done
 
-# Output
+
 deadlocked=()
 for ((i=0; i<$n; i++)); do
     if [ ${finish[$i]} -eq 0 ]; then
@@ -76,6 +76,3 @@ else
     done
     echo
 fi
-
-
-
