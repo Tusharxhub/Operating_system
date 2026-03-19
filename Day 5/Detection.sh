@@ -97,3 +97,5 @@ fi
 # *       "Day 5/Detection.sh"
 # *    5. The output will display the scheduling results, including the average waiting time and average turnaround time for the given processes based on their burst times and arrival times.
 # ?    Example Output
+# *    No deadlock detected.
+# *    Safe sequence: P0 P1 P2 P3
