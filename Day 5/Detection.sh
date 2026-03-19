@@ -35,6 +35,7 @@ m=2
 finish=(0 0 0 0)
 work=(${avail[@]})
 changed=1
+sequence=()
 while [ $changed -eq 1 ]; do
     changed=0
     for ((i=0; i<$n; i++)); do
@@ -54,6 +55,7 @@ while [ $changed -eq 1 ]; do
                 done
                 finish[$i]=1
                 changed=1
+                sequence+=("P$i")
             fi
         fi
     done
@@ -69,6 +71,11 @@ done
 
 if [ ${#deadlocked[@]} -eq 0 ]; then
     echo "No deadlock detected."
+    echo -n "Safe sequence: "
+    for p in "${sequence[@]}"; do
+        echo -n "$p "
+    done
+    echo
 else
     echo -n "Deadlocked processes: "
     for p in "${deadlocked[@]}"; do
