@@ -54,6 +54,15 @@ Operating_system/
 ├── Day 4/
 │   ├── 1.sh
 │   └── 2.sh
+├── Day 5/
+│   ├── Avoidance.sh
+│   └── Detection.sh
+├── Day 6/
+│   ├── child.sh
+│   ├── orphan.sh
+│   ├── process.sh
+│   ├── synchronisation.sh
+│   └── zombie.sh
 └── Exam/
     ├── fibonacci.sh
     ├── prime.sh
@@ -90,6 +99,17 @@ Operating_system/
 ### Day 4 – Additional Scripts
 - **1.sh**: (Add description)
 - **2.sh**: (Add description)
+
+### Day 5 – Deadlock Concepts
+- **Avoidance.sh**: Demonstrates deadlock avoidance logic
+- **Detection.sh**: Demonstrates deadlock detection logic
+
+### Day 6 – Process Management
+- **process.sh**: Create parent and child process and print their PIDs
+- **synchronisation.sh**: Parent waits for child completion using `wait`
+- **orphan.sh**: Demonstrates orphan process behavior
+- **zombie.sh**: Demonstrates zombie process behavior
+- **child.sh**: Creates multiple child processes and synchronizes with parent
 
 ### Exam – Lab Exam Scripts
 - **fibonacci.sh**: Fibonacci sequence generator

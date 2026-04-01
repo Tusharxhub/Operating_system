@@ -6,77 +6,42 @@
 #! P1            0    1       1    2         
 #! P2            1    1       2    2 
 
-alloc=(
-	"1 0"
-	"0 1"
-	"1 1"
-)
-max=(
-	"2 1"
-	"1 2"
-	"2 2"
-)
+alloc=("1 0" "0 1" "1 1")
+max=("2 1" "1 2" "2 2")
 avail=(1 1)
-
-n=3
-m=2
+n=3 m=2
 
 declare -a need
-for ((i=0; i<$n; i++)); do
-	alloc_row=(${alloc[$i]})
-	max_row=(${max[$i]})
-	need_row=()
-	for ((j=0; j<$m; j++)); do
-		need_row+=( $(( ${max_row[$j]} - ${alloc_row[$j]} )) )
-	done
-	need[$i]="${need_row[@]}"
+for ((i=0; i<n; i++)); do
+	need[$i]="$(for j in {0..1}; do echo $((${${max[$i]}[$j]} - ${${alloc[$i]}[$j]})); done)"
 done
 
-# Banker's Algorithm
 finish=(0 0 0)
 safe_seq=()
 work=(${avail[@]})
 count=0
+
 while [ $count -lt $n ]; do
-	found=0
-	for ((i=0; i<$n; i++)); do
+	for ((i=0; i<n; i++)); do
 		if [ ${finish[$i]} -eq 0 ]; then
 			need_row=(${need[$i]})
-			alloc_row=(${alloc[$i]})
 			can_allocate=1
-			for ((j=0; j<$m; j++)); do
-				if [ ${need_row[$j]} -gt ${work[$j]} ]; then
-					can_allocate=0
-					break
-				fi
+			for j in {0..1}; do
+				[ ${need_row[$j]} -gt ${work[$j]} ] && can_allocate=0
 			done
 			if [ $can_allocate -eq 1 ]; then
-				for ((j=0; j<$m; j++)); do
-					work[$j]=$(( ${work[$j]} + ${alloc_row[$j]} ))
+				for j in {0..1}; do
+					work[$j]=$((work[$j] + ${${alloc[$i]}[$j]}))
 				done
 				safe_seq+=("P$i")
 				finish[$i]=1
-				found=1
 				((count++))
 			fi
 		fi
 	done
-	if [ $found -eq 0 ]; then
-		break
-	fi
 done
 
-# Output
-if [ $count -eq $n ]; then
-	echo "System is in a safe state."
-	echo -n "Safe sequence: "
-	for p in "${safe_seq[@]}"; do
-		echo -n "$p "
-	done
-	echo
-else
-	echo "System is NOT in a safe state."
-fi
+[ $count -eq $n ] && echo "System is in a safe state." && echo "Safe sequence: ${safe_seq[@]}" || echo "System is NOT in a safe state."
 
 # ?    How to compile and run the code
 # *    1. Open your terminal.
