@@ -1,32 +1,22 @@
 # !  Create a multiple-child process
 
 
-parent_pid=$$
-echo "Parent process PID: $parent_pid"
+echo "Parent PID: $$"
+pids=()
 
-child_pids=()
-
-for i in 1 2 3
-do
+for i in 1 2 3; do
 	(
-		echo "Child $i started. PID: $BASHPID, Parent PID: $parent_pid"
+		echo "Child $i PID: $BASHPID"
 		sleep "$i"
-		echo "Child $i finished. PID: $BASHPID"
 	) &
-
-	child_pids+=("$!")
+	pids+=("$!")
 done
 
-echo "Parent created child PIDs: ${child_pids[*]}"
-
-for pid in "${child_pids[@]}"
-do
+for pid in "${pids[@]}"; do
 	wait "$pid"
-	echo "Parent confirmed completion of child PID: $pid"
 done
 
-echo "All child processes have completed."
-
+echo "All child processes completed."
 
 
 # ?    How to compile and run the code
@@ -35,14 +25,12 @@ echo "All child processes have completed."
 # *    3. Make sure the script has execute permissions. You can set the permissions
 # *       using the command:
 # *       chmod +x "Day 6/child.sh"
-# *    4. Run the script using the command:
+# *    4. Run the script using the command: 
 # *       "Day 6/child.sh"  
-# *    5. The output will display the parent process ID, child process IDs, and messages indicating the creation and completion of each child process, demonstrating the creation of multiple child processes and their synchronization with the parent process.
+# *    5. The output will display the parent process ID and the process IDs of the three child processes, along with messages indicating their creation and completion.
 # ?    Example Output
-#* Parent process PID: 18408
-#* Child 1 started. PID: 18409, Parent PID: 18408
-#* Child 2 started. PID: 18410, Parent PID: 18408
-#* Child 3 started. PID: 18411, Parent PID: 18408
-#* Parent created child PIDs: 18409 18410 18411
-#* Child 1 finished. PID: 18409
-#* Parent confirmed completion of child PID: 18409
+#* Parent PID: 18408
+#* Child 1 PID: 18409
+#* Child 2 PID: 18410
+#* Child 3 PID: 18411
+#* All child processes completed.
