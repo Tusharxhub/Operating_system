@@ -12,76 +12,43 @@
 
 
 
-alloc=(
-    "1 0"
-    "2 1"
-    "0 1"
-    "1 0"
-)
-
-request=(
-    "0 1"
-    "1 0"
-    "1 0"
-    "0 1"
-)
-
+alloc=("1 0" "2 1" "0 1" "1 0")
+request=("0 1" "1 0" "1 0" "0 1")
 avail=(1 0)
-
-n=4
-m=2
-
-
+n=4 m=2
 finish=(0 0 0 0)
 work=(${avail[@]})
-changed=1
 sequence=()
-while [ $changed -eq 1 ]; do
-    changed=0
-    for ((i=0; i<$n; i++)); do
-        if [ ${finish[$i]} -eq 0 ]; then
-            req_row=(${request[$i]})
-            alloc_row=(${alloc[$i]})
-            can_allocate=1
-            for ((j=0; j<$m; j++)); do
-                if [ ${req_row[$j]} -gt ${work[$j]} ]; then
-                    can_allocate=0
-                    break
-                fi
+
+while true; do
+    found=0
+    for ((i=0; i<n; i++)); do
+        [ ${finish[$i]} -eq 0 ] || continue
+        req=(${request[$i]})
+        alloc=(${alloc[$i]})
+        can=1
+        for ((j=0; j<m; j++)); do
+            [ ${req[$j]} -le ${work[$j]} ] || can=0
+        done
+        if [ $can -eq 1 ]; then
+            for ((j=0; j<m; j++)); do
+                work[$j]=$((work[$j] + alloc[$j]))
             done
-            if [ $can_allocate -eq 1 ]; then
-                for ((j=0; j<$m; j++)); do
-                    work[$j]=$(( ${work[$j]} + ${alloc_row[$j]} ))
-                done
-                finish[$i]=1
-                changed=1
-                sequence+=("P$i")
-            fi
+            finish[$i]=1
+            sequence+=("P$i")
+            found=1
         fi
     done
+    [ $found -eq 1 ] || break
 done
 
-
-deadlocked=()
-for ((i=0; i<$n; i++)); do
-    if [ ${finish[$i]} -eq 0 ]; then
-        deadlocked+=("P$i")
-    fi
-done
+deadlocked=($(for ((i=0; i<n; i++)); do [ ${finish[$i]} -eq 0 ] && echo "P$i"; done))
 
 if [ ${#deadlocked[@]} -eq 0 ]; then
     echo "No deadlock detected."
-    echo -n "Safe sequence: "
-    for p in "${sequence[@]}"; do
-        echo -n "$p "
-    done
-    echo
+    echo "Safe sequence: ${sequence[@]}"
 else
-    echo -n "Deadlocked processes: "
-    for p in "${deadlocked[@]}"; do
-        echo -n "$p "
-    done
-    echo
+    echo "Deadlocked processes: ${deadlocked[@]}"
 fi
 
 
