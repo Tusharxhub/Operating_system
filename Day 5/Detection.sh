@@ -14,43 +14,25 @@
 
 alloc=("1 0" "2 1" "0 1" "1 0")
 request=("0 1" "1 0" "1 0" "0 1")
-avail=(1 0)
-n=4 m=2
-finish=(0 0 0 0)
-work=(${avail[@]})
-sequence=()
+work=(1 0) finish=(0 0 0 0) sequence=()
 
-while true; do
-    found=0
-    for ((i=0; i<n; i++)); do
-        [ ${finish[$i]} -eq 0 ] || continue
-        req=(${request[$i]})
-        alloc=(${alloc[$i]})
-        can=1
-        for ((j=0; j<m; j++)); do
-            [ ${req[$j]} -le ${work[$j]} ] || can=0
-        done
-        if [ $can -eq 1 ]; then
-            for ((j=0; j<m; j++)); do
-                work[$j]=$((work[$j] + alloc[$j]))
-            done
-            finish[$i]=1
-            sequence+=("P$i")
-            found=1
+for ((iter=0; iter<4; iter++)); do
+    for ((i=0; i<4; i++)); do
+        if [ ${finish[$i]} -eq 0 ]; then
+            read req_a req_b <<< "${request[$i]}"
+            if [ $req_a -le ${work[0]} ] && [ $req_b -le ${work[1]} ]; then
+                read a b <<< "${alloc[$i]}"
+                work[0]=$((work[0] + a))
+                work[1]=$((work[1] + b))
+                finish[$i]=1
+                sequence+=("P$i")
+            fi
         fi
     done
-    [ $found -eq 1 ] || break
 done
 
-deadlocked=($(for ((i=0; i<n; i++)); do [ ${finish[$i]} -eq 0 ] && echo "P$i"; done))
-
-if [ ${#deadlocked[@]} -eq 0 ]; then
-    echo "No deadlock detected."
-    echo "Safe sequence: ${sequence[@]}"
-else
-    echo "Deadlocked processes: ${deadlocked[@]}"
-fi
-
+deadlock=($(for ((i=0; i<4; i++)); do [ ${finish[$i]} -eq 0 ] && echo "P$i"; done))
+[ ${#deadlock[@]} -eq 0 ] && echo "No deadlock detected." && echo "Safe sequence: ${sequence[@]}" || echo "Deadlocked: ${deadlock[@]}"
 
 
 
