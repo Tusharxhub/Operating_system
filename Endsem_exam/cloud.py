@@ -26,11 +26,8 @@ allocated = []
 internal = 0
 
 for p, size in processes.items():
-    best = -1
-    for i in range(len(partitions)):
-        if partitions[i] >= size:
-            if best == -1 or partitions[i] < partitions[best]:
-                best = i
+    candidates = [i for i, part in enumerate(partitions) if part >= size]
+    best = min(candidates, key=partitions.__getitem__) if candidates else -1
 
     if best != -1:
         waste = partitions[best] - size
@@ -41,9 +38,7 @@ for p, size in processes.items():
         allocated.append((p, size, "Not Allocated", 0))
 
 print("Strategy Used: Best Fit\n")
-
-for x in allocated:
-    print(x)
+print(*allocated, sep="\n")
 
 print("\nInternal Fragmentation =", internal, "KB")
 
