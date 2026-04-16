@@ -17,7 +17,7 @@
 
 #! The memory manager allocates each process into the smallest available partition that can accommodate the process in order to minimize wasted memory.
 
-
+  
 
 partitions = [100, 350, 200, 450, 600]
 processes = {"P1": 90, "P2": 180, "P3": 340, "P4": 210, "P5": 400}
